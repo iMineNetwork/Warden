@@ -1,0 +1,4 @@
+name: ${project.name}
+version: ${project.version}
+main:  nl.imine.warden.WardenPlugin
+author: iMine Plugin Development Team
