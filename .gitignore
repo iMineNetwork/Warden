@@ -4,7 +4,7 @@
 !pom.xml
 !.gitignore
 !src/
-!/src/**
+!/src/**/*
 
 !libs/
 !/libs/**
