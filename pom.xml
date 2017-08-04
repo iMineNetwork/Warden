@@ -6,7 +6,7 @@
 	<groupId>nl.imine</groupId>
 	<artifactId>Warden</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-RELEASE</version>
 	<name>Warden</name>
 	<url>iMine.nl</url>
 
