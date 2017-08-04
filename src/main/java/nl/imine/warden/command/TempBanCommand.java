@@ -45,6 +45,7 @@ public class TempBanCommand extends Command implements TabExecutor {
 			try {
 				uuid = UUID.fromString(args[0]);
 				currentName = userCacheService.getLatestNameByUUID(uuid).getName();
+				player = ProxyServer.getInstance().getPlayer(uuid);
 			} catch (IllegalArgumentException e) {
 				player = ProxyServer.getInstance().getPlayer(args[0]);
 				if (player != null) {
