@@ -39,7 +39,6 @@ public class IPBanCommand extends Command implements TabExecutor {
 			UUID uuid = null;
 			String customName = null;
 			InetAddress address = null;
-			ProxiedPlayer player = null;
 
 			//Try to parse the argument as a IPAddress
 			try {
@@ -60,7 +59,7 @@ public class IPBanCommand extends Command implements TabExecutor {
 					}
 				} catch (IllegalArgumentException iae) {
 					//Look if a player with this name is online
-					player = ProxyServer.getInstance().getPlayer(args[0]);
+					ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[0]);
 					if (player != null) {
 						uuid = player.getUniqueId();
 						address = player.getAddress().getAddress();
@@ -80,16 +79,18 @@ public class IPBanCommand extends Command implements TabExecutor {
 					String reason = String.join(" ", String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
 					banService.ipBanPlayer(address, uuid, uuidSender, reason);
 
-					if (player != null) {
-						ComponentBuilder kickMessageBuilder = ComponentHelper.getPrefixedComponentBuilder();
-						kickMessageBuilder
-								.append(reason)
-								.color(ChatColor.WHITE);
+					for(ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
+						if(proxiedPlayer.getAddress().getAddress().equals(address)) {
+							ComponentBuilder kickMessageBuilder = ComponentHelper.getPrefixedComponentBuilder();
+							kickMessageBuilder
+									.append(reason)
+									.color(ChatColor.WHITE);
 
-						//Kick the player
-						player.disconnect(kickMessageBuilder.create());
-
-					} else if (uuid != null) {
+							//Kick the player
+							proxiedPlayer.disconnect(kickMessageBuilder.create());
+						}
+					}
+					if (uuid != null) {
 						//Notify all players online with the permission
 						ComponentBuilder messageBuilder = ComponentHelper.getPrefixedComponentBuilder();
 						messageBuilder

@@ -6,7 +6,9 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -41,7 +43,6 @@ public abstract class CommandTest {
 
 	protected ProxiedPlayer mockCommandSenderPlayer;
 	protected ProxiedPlayer mockPlayerOnline;
-	protected ProxiedPlayer mockPlayerOffline;
 
 	@Mock
 	protected BanService mockBanService;
@@ -79,6 +80,7 @@ public abstract class CommandTest {
 		mockCommandSenderPlayer = mock(ProxiedPlayer.class);
 		when(mockCommandSenderPlayer.getUniqueId()).thenReturn(commandSenderUuid);
 		when(mockCommandSenderPlayer.getName()).thenReturn(playerOfflineName);
+		when(mockCommandSenderPlayer.getAddress()).thenReturn(new InetSocketAddress(commandSenderInetAddress, 0));
 		when(proxyServer.getPlayer(commandSenderUuid)).thenReturn(mockCommandSenderPlayer);
 		when(proxyServer.getPlayer(commandSenderName)).thenReturn(mockCommandSenderPlayer);
 		when(mockUserCacheService.getLatestNameByUUID(commandSenderUuid)).thenReturn(new NameEntry(
@@ -92,6 +94,7 @@ public abstract class CommandTest {
 		mockPlayerOnline = mock(ProxiedPlayer.class);
 		when(mockPlayerOnline.getUniqueId()).thenReturn(playerOnlineUuid);
 		when(mockPlayerOnline.getName()).thenReturn(playerOnlineName);
+		when(mockPlayerOnline.getAddress()).thenReturn(new InetSocketAddress(playerOnlineInetAddress, 0));
 		when(proxyServer.getPlayer(playerOnlineUuid)).thenReturn(mockPlayerOnline);
 		when(proxyServer.getPlayer(playerOnlineName)).thenReturn(mockPlayerOnline);
 		when(mockUserCacheService.getLatestNameByUUID(playerOnlineUuid)).thenReturn(new NameEntry(
@@ -102,9 +105,6 @@ public abstract class CommandTest {
 				playerOnlineInetAddress
 		));
 
-		mockPlayerOffline = mock(ProxiedPlayer.class);
-		when(mockPlayerOffline.getUniqueId()).thenReturn(playerOfflineUuid);
-		when(mockPlayerOffline.getName()).thenReturn(playerOfflineName);
 		when(mockUserCacheService.getLatestNameByUUID(playerOfflineUuid)).thenReturn(new NameEntry(
 				playerOfflineUuid,
 				playerOfflineName,
@@ -112,5 +112,7 @@ public abstract class CommandTest {
 				LocalDateTime.now(),
 				playerOfflineInetAddress
 		));
+
+		when(proxyServer.getPlayers()).thenReturn(Arrays.asList(mockCommandSenderPlayer, mockPlayerOnline));
 	}
 }
