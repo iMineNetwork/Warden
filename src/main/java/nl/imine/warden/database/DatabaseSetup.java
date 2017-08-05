@@ -29,6 +29,9 @@ public class DatabaseSetup {
             PreparedStatement createNameCacheTable = connection
                     .prepareStatement("CREATE TABLE IF NOT EXISTS `UserCache` (`UUID` VARCHAR(36), `Name` VARCHAR(16), `FirstSeen` TIMESTAMP, `LastSeen` TIMESTAMP, `IP` VARCHAR(32) NOT NULL, CONSTRAINT PK_NameCache PRIMARY KEY(UUID, FirstSeen))");
             createNameCacheTable.execute();
+            PreparedStatement createPardonTable = connection
+                    .prepareStatement("CREATE TABLE IF NOT EXISTS `Pardon` (`UUID` VARCHAR(36) NOT NULL, `FromUUID` VARCHAR(36), `Timestamp` TIMESTAMP NOT NULL, `BanTime` TIMESTAMP NOT NULL, CONSTRAINT PK_Pardon PRIMARY KEY(UUID, BanTime))");
+            createPardonTable.execute();
         } catch (SQLException e) {
             System.err.println("Could not create tables | " + e.getMessage());
         }

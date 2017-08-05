@@ -27,7 +27,7 @@ public class WardenPlugin extends Plugin {
 		MySQLService mySQLService = initDatabase();
 		BanService banService = new BanService(mySQLService);
 		UserCacheService userCacheService = new UserCacheService(mySQLService);
-		TabCompletionUtil tabCompletionUtil = new TabCompletionUtil(userCacheService);
+		TabCompletionUtil tabCompletionUtil = new TabCompletionUtil(banService, userCacheService);
 		//TODO Retrieve all bans from Bukkit's ban list
 		//TODO Retrieve all IP Bans from Bukkit's ipban list
 

@@ -9,14 +9,13 @@ import java.util.stream.Collectors;
 
 import nl.imine.warden.dao.BanDao;
 import nl.imine.warden.dao.IPBanDao;
+import nl.imine.warden.dao.PardonDao;
 import nl.imine.warden.dao.TempBanDao;
 import nl.imine.warden.dao.impl.BanDaoImpl;
 import nl.imine.warden.dao.impl.IPBanDaoImpl;
+import nl.imine.warden.dao.impl.PardonDaoImpl;
 import nl.imine.warden.dao.impl.TempBanDaoImpl;
-import nl.imine.warden.model.ban.BanEntry;
-import nl.imine.warden.model.ban.BanType;
-import nl.imine.warden.model.ban.IPBanEntry;
-import nl.imine.warden.model.ban.TempBanEntry;
+import nl.imine.warden.model.ban.*;
 import nl.imine.warden.service.mysql.MySQLService;
 
 public class BanService {
@@ -24,11 +23,13 @@ public class BanService {
 	private BanDao banDao;
 	private TempBanDao tempBanDao;
 	private IPBanDao ipBanDao;
+	private PardonDao pardonDao;
 
 	public BanService(MySQLService mySQLService) {
 		banDao = new BanDaoImpl(mySQLService);
 		tempBanDao = new TempBanDaoImpl(mySQLService);
 		ipBanDao = new IPBanDaoImpl(mySQLService);
+		pardonDao = new PardonDaoImpl(mySQLService);
 	}
 
 	public BanEntry getBan(UUID player) {
@@ -71,11 +72,23 @@ public class BanService {
 		tempBanDao.createTempBan(new TempBanEntry(player, source, reason, LocalDateTime.now(), BanType.TEMPBAN, true, LocalDateTime.now().plus(duration), duration));
 	}
 
-	public void pardonPlayer(UUID playerId) {
+	public boolean pardonPlayer(UUID playerId, UUID fromId) {
 		BanEntry ban = banDao.getBan(playerId);
 		if (ban != null) {
 			banDao.deleteBan(ban);
+			pardonDao.createPardon(new PardonEntry(playerId, fromId, LocalDateTime.now(), ban.getBanTimestmap()));
+			return true;
 		}
+		return false;
+	}
 
+	public boolean pardonIp(InetAddress address, UUID fromUUID){
+		IPBanEntry ipBanEntry = ipBanDao.getIPBan(address);
+		if (ipBanEntry != null) {
+			banDao.deleteBan(ipBanEntry);
+			pardonDao.createPardon(new PardonEntry(ipBanEntry.getUuid(), fromUUID, LocalDateTime.now(), ipBanEntry.getBanTimestmap()));
+			return true;
+		}
+		return false;
 	}
 }
